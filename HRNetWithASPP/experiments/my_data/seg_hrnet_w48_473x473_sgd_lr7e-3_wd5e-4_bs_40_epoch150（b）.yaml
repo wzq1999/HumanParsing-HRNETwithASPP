@@ -1,0 +1,102 @@
+CUDNN:
+  BENCHMARK: true
+  DETERMINISTIC: false
+  ENABLED: true
+GPUS: (0,)
+OUTPUT_DIR: '/media/feng/新加卷/hrnet/program_output/output'
+LOG_DIR: '/media/feng/新加卷/hrnet/program_output/log'
+WORKERS: 1
+PRINT_FREQ: 100
+
+DATASET:
+  DATASET: my_data
+  ROOT: '/media/feng/新加卷/hrnet/data/data_weak/'
+  TEST_SET: 'my_data/list/valList.txt'
+  TRAIN_SET: 'my_data/list/trainList.txt'
+  NUM_CLASSES: 2
+MODEL:
+  NAME: seg_hrnet
+  PRETRAINED: '/media/feng/新加卷/hrnet/models/pretrained_models/hrnetv2_w48_imagenet_pretrained.pth'
+  EXTRA:
+    FINAL_CONV_KERNEL: 1
+    STAGE1:
+      NUM_MODULES: 1
+      NUM_RANCHES: 1
+      BLOCK: BOTTLENECK
+      NUM_BLOCKS:
+      - 4
+      NUM_CHANNELS:
+      - 64
+      FUSE_METHOD: SUM
+    STAGE2:
+      NUM_MODULES: 1
+      NUM_BRANCHES: 2
+      BLOCK: BASIC
+      NUM_BLOCKS:
+      - 4
+      - 4
+      NUM_CHANNELS:
+      - 48
+      - 96
+      FUSE_METHOD: SUM
+    STAGE3:
+      NUM_MODULES: 4
+      NUM_BRANCHES: 3
+      BLOCK: BASIC
+      NUM_BLOCKS:
+      - 4
+      - 4
+      - 4
+      NUM_CHANNELS:
+      - 48
+      - 96
+      - 192
+      FUSE_METHOD: SUM
+    STAGE4:
+      NUM_MODULES: 3
+      NUM_BRANCHES: 4
+      BLOCK: BASIC
+      NUM_BLOCKS:
+      - 4
+      - 4
+      - 4
+      - 4
+      NUM_CHANNELS:
+      - 48
+      - 96
+      - 192
+      - 384
+      FUSE_METHOD: SUM
+LOSS:
+  USE_OHEM: false
+  OHEMTHRES: 0.9
+  OHEMKEEP: 131072
+TRAIN:
+  IMAGE_SIZE:
+  - 600
+  - 600
+  BASE_SIZE: 600
+  BATCH_SIZE_PER_GPU: 10
+  SHUFFLE: true
+  BEGIN_EPOCH: 0
+  END_EPOCH: 3
+  RESUME: true
+  OPTIMIZER: sgd
+  LR: 0.007
+  WD: 0.0005
+  MOMENTUM: 0.9
+  NESTEROV: false
+  FLIP: false
+  MULTI_SCALE: true
+  DOWNSAMPLERATE: 1
+  IGNORE_LABEL: 255
+  SCALE_FACTOR: 11
+TEST:
+  IMAGE_SIZE:
+  - 600
+  - 600
+  BASE_SIZE: 600
+  BATCH_SIZE_PER_GPU: 20
+  NUM_SAMPLES: 2000
+  FLIP_TEST: false
+  MULTI_SCALE: false
